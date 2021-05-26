@@ -28,9 +28,9 @@ class UserController extends Controller
         // $this->authorize('isAdmin');
         if (\Gate::allows('isAdmin')) {
         //    return User::latest()->paginate(5);
-           return User::paginate(5);
+        //    return User::paginate(5);
+            return User::allJoin();
         }
-        
     }
 
     /**
@@ -175,5 +175,11 @@ class UserController extends Controller
         }
 
         return $users;
+    }
+
+    public function reviewer()
+    {
+        $reviewer = User::reviewer();
+        return response()->$reviewer;
     }
 }

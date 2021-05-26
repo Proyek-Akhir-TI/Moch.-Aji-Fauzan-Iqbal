@@ -36,7 +36,7 @@
                       <td>{{user.id}}</td>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
-                      <td>{{user.type | upText}}</td>
+                      <td>{{user.role | upText}}</td>
                       <td>{{user.created_at | myDate}}</td>
                       <td>
                           <a href="#" @click="editModal(user)">
@@ -108,9 +108,9 @@
                             <select v-model="form.type" id="type" name="type"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('type') }">
                                 <option value="">Select User Role</option>
-                                <option value="admin">Admin</option>
-                                <option value="user">User</option>
-                                <option value="reviewer">Reviewer</option>
+                                <option value="1">Admin</option>
+                                <option value="2">Dosen</option>
+                                <option value="3">Reviewer</option>
                             </select>
                             <has-error :form="form" field="name"></has-error>
                         </div>

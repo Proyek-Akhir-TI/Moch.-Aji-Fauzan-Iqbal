@@ -65,7 +65,8 @@ class UsulanController extends Controller
             // 'file' => $request['file'],
             'file' => $fileName,
             'id_user'=> $user->id,
-            'status'=>'pengajuan'
+            'id_reviewer'=>$request['id_reviewer'],
+            'status'=>$request['status']
         ]);
     }
 

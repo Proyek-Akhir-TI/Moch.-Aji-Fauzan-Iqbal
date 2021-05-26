@@ -185,12 +185,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <router-link to="/usulan" class="nav-link">
-                  <i class="fas fa-users nav-icon"></i>
-                  <p>Info Status</p>
+                  <i class="fas fa-file nav-icon"></i>
+                  <p>Usulan Baru</p>
                 </router-link>
 
                 <router-link to="/dataUsulan" class="nav-link">
-                  <i class="fas fa-users nav-icon"></i>
+                  <i class="fas fa-file nav-icon"></i>
                   <p>Data Usulan</p>
                 </router-link>
               </li>
@@ -254,8 +254,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </ul>
               
           </li>
+          @endcan
 
-          
+          @can('isReviewer')
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <!-- <router-link to="/usulanDosen" class="nav-link"> -->
+                  <i class="fas fa-download nav-icon yellow"></i>
+                  <p>
+                    Usulan
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                <!-- </router-link> -->
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link to="/usulanReviewer" class="nav-link">
+                  <i class="fas fa-book nav-icon orange"></i>
+                  <p>Daftar Review</p>
+                </router-link>
+              </li>
+            </ul>
+          </li>
           @endcan
 
           <!-- <li class="nav-item">

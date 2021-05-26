@@ -17,10 +17,10 @@ import swal from 'sweetalert2'
 window.swal = swal;
 
 const toast = swal.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 3000
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
 });
 
 window.toast = toast;
@@ -39,9 +39,9 @@ Vue.use(VueRouter)
 
 import VueProgressBar from 'vue-progressbar'
 Vue.use(VueProgressBar, {
-  color: 'rgb(143, 255, 199)',
-  failedColor: 'red',
-  height: '3px'
+    color: 'rgb(143, 255, 199)',
+    failedColor: 'red',
+    height: '3px'
 })
 
 // import Vue from 'vue';
@@ -66,20 +66,21 @@ let routes = [
     { path: '/password', component: require('./components/Password.vue').default },
     { path: '/usulanDosen', component: require('./components/UsulanDosen.vue').default },
     { path: '/dataUsulan', component: require('./components/DataUsulan.vue').default },
+    { path: '/usulanReviewer', component: require('./components/UsulanReviewer.vue').default },
     { path: '*', component: require('./components/NotFound.vue').default }
-  ]
+]
 
 const router = new VueRouter({
     mode: 'history',
     routes // short for `routes: routes`
-  })
+})
 
-Vue.filter('upText', function(text){
-  return text.charAt(0).toUpperCase() + text.slice(1)
+Vue.filter('upText', function(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1)
 });
 
-Vue.filter('myDate', function(created){
-  return moment(created).format('MMMM Do YYYY, h:mm:ss a');
+Vue.filter('myDate', function(created) {
+    return moment(created).format('MMMM Do YYYY, h:mm:ss a');
 });
 
 window.Fire = new Vue();
@@ -97,23 +98,23 @@ window.Fire = new Vue();
 
 
 Vue.component(
-  'passport-clients',
-  require('./components/passport/Clients.vue').default
+    'passport-clients',
+    require('./components/passport/Clients.vue').default
 );
 
 Vue.component(
-  'passport-authorized-clients',
-  require('./components/passport/AuthorizedClients.vue').default
+    'passport-authorized-clients',
+    require('./components/passport/AuthorizedClients.vue').default
 );
 
 Vue.component(
-  'passport-personal-access-tokens',
-  require('./components/passport/PersonalAccessTokens.vue').default
+    'passport-personal-access-tokens',
+    require('./components/passport/PersonalAccessTokens.vue').default
 );
 
 Vue.component(
-  'not-found',
-  require('./components/NotFound.vue').default
+    'not-found',
+    require('./components/NotFound.vue').default
 );
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
@@ -127,17 +128,17 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 const app = new Vue({
     el: '#app',
     router,
-    data:{
-      search: ''
+    data: {
+        search: ''
     },
-    methods:{
-      searchit: _.debounce(() => {
-         Fire.$emit("searching");
-      },1000),
+    methods: {
+        searchit: _.debounce(() => {
+            Fire.$emit("searching");
+        }, 1000),
 
-      printme() {
-        window.print();
-      }
+        printme() {
+            window.print();
+        }
     }
     // components:{
     //   Panduan,

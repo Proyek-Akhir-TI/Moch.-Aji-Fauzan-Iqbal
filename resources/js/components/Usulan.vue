@@ -33,7 +33,7 @@
 
                 <!-- <div class="card-tools">
                   <button class="btn btn-success" @click="newModal">
-                    Add New
+                    Tambah Baru
                     <i class="fas fa-file-upload"></i>
                   </button>
                 </div> -->
@@ -44,26 +44,28 @@
                 <table class="table table-hover text-nowrap">
                   <thead>
                     <tr>
-                      <th>ID</th>
+                      <th>No</th>
                       <th>Judul</th>
                       <!-- <th>Deskripsi</th> -->
                       <th>User</th>
                       <th>File</th>
                       <th>Status</th>
-                      <th>Registered At</th>
-                      <th>Modify</th>
+                      <th>Tanggal Upload</th>
+                      <th>Reviewer</th>
+                      <th>Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="usulan in usulan.data" :key="usulan.id">
-                      <td>{{usulan.id}}</td>
+                    <tr v-for="(usulan,index) in usulan.data" :key="usulan.id">
+                      <td>{{index+1}}</td>
                       <td>{{usulan.judul}}</td>
                       <!-- <td>{{usulan.deskripsi}}</td> -->
-                      <td>{{usulan.name}}</td>
+                      <td>{{usulan.user_upload}}</td>
                       <!-- <td>{{usulan.file}}</td> -->
                       <td><a href="#" @click="download(usulan.file)">{{usulan.file}}</a></td>
-                      <td>{{usulan.status}}</td>
+                      <td>{{usulan.nama_status}}</td>
                       <td>{{usulan.created_at | myDate}}</td>
+                      <td>{{usulan.reviewer}}</td>
                       <td>
                           <a href="#" @click="editModal(usulan)">
                               <i class="fa fa-edit blue"></i>
@@ -117,30 +119,38 @@
                             <has-error :form="form" field="deskripsi"></has-error>
                     </div>
                     <div class="form-group">
+                      <label>Dosen Reviewer</label>
+                      <select name="id_reviewer" id="id_reviewer" v-model="form.id_reviewer" class="form-control" :class="{'is-invalid': form.errors.has('id_reviewer')}">
+                           <option value="">Pilih Dosen Reviewer</option>
+                           <option v-for="reviewer in reviewers" :value="reviewer.id" :key="reviewer.value"> 
+                               {{ reviewer.name }} 
+                               </option>
+                        </select>
+                        <has-error :form="form" field="id_reviewer"></has-error>
+                    </div>
+                    <div class="form-group">
                             <label for="status" class="col-form-label">Status</label>
-
                             <select v-model="form.status" id="status" name="status"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('status') }">
-                                <option value="">Select User Role</option>
-                                <option value="pengajuan">pengajuan</option>
-                                <option value="direview">direview</option>
-                                <option value="diterima">diterima</option>
-                                <option value="ditolak">ditolak</option>
+                                <option value="">Pilih Status</option>
+                                <option value="1">Pengajuan</option>
+                                <option value="2">Direview</option>
+                                <option value="3">Diterima</option>
+                                <option value="4">Ditolak</option>
                                 <!-- <option value="author">Author</option> -->
                             </select>
                             <has-error :form="form" field="status"></has-error>
-                        </div>
+                      </div>
                     <div class="form-group">
                               <label for="file" class="col-form-label">Upload File</label>
-                                    
                               <div class="col-sm-12">
-                                  <input type="file" name="file" class="form-input">
+                                  <input type="file" name="file" class="form-input" v-on:change="onFileChange">
                               </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <!-- <button type="submit" class="btn btn-primary">Save</button> -->
+                    <button v-show="!editmode" type="submit" class="btn btn-primary">Save</button>
                     <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
                     <!-- <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button> -->
                 </div>
@@ -158,12 +168,14 @@
         return {
           editmode : false,
           usulan : {},
+          reviewers : {},
           form: new Form({
             id : '',
             judul : '',
             deskripsi : '',
-            dosen : '',
-            file : ''
+            file : '',
+            status : '',
+            id_reviewer : '',
           })
         }
       },
@@ -230,6 +242,9 @@
                     }
                 })
         },
+        loadReviewer(){
+          axios.get("api/reviewer").then(({ data }) => this.reviewers = data);
+        },
         loadUsulan(){
           axios.get("api/usulan_admin").then(({ data }) => this.usulan = data);
         },
@@ -257,7 +272,8 @@
                 formData.append('file', this.file);
                 formData.append('judul', this.form.judul);
                 formData.append('deskripsi', this.form.deskripsi);
-   
+                formData.append('id_reviewer', this.form.id_reviewer);
+                formData.append('status', this.form.status);
                 axios.post('/api/usulan', formData, config)
           // this.form.post('api/usulan')
           .then(()=>{
@@ -279,6 +295,7 @@
       },
       created() {
         this.loadUsulan();
+        this.loadReviewer();
         Fire.$on('AfterCreate',()=>{
           this.loadUsulan();
         });

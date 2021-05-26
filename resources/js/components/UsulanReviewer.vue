@@ -29,14 +29,14 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Tabel Usulan</h3>
+                <h3 class="card-title">Usulan Perlu Direview</h3>
 
-                <div class="card-tools">
+                <!-- <div class="card-tools">
                   <button class="btn btn-success" @click="newModal">
                     Add New
                     <i class="fas fa-file-upload"></i>
                   </button>
-                </div>
+                </div> -->
 
               </div>
               <!-- /.card-header -->
@@ -44,12 +44,12 @@
                 <table class="table table-hover text-nowrap">
                   <thead>
                     <tr>
-                      <th>NO</th>
+                      <th>No</th>
+                      <th>Kategori</th>
                       <th>Judul</th>
                       <th>Deskripsi</th>
                       <th>File</th>
                       <th>Tanggal Upload</th>
-                      <td>Reviewer</td>
                       <th>Status</th>
                       <th>Lihat Detail</th>
                     </tr>
@@ -57,16 +57,16 @@
                   <tbody>
                     <tr v-for="(usulan,index) in usulan.data" :key="usulan.id">
                       <td>{{index+1}}</td>
+                      <td>{{usulan.kategori}}</td>
                       <td>{{usulan.judul}}</td>
                       <td>{{usulan.deskripsi}}</td>
                       <td><a href="#" @click="download(usulan.file)">{{usulan.file}}</a></td>
                       <!-- <td>{{usulan.file}}</td> -->
                       <td>{{usulan.created_at | myDate}}</td>
-                      <td>{{usulan.reviewer}}</td>
                       <td>{{usulan.nama_status}}</td>
                       <td>
                           <a href="#" @click="editModal(usulan)">
-                            Lihat Detail
+                            Tambahkan Catatan
                               <i class="fa fa-info-circle"></i>
                           </a>
                       </td>
@@ -97,7 +97,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" v-show="!editmode" id="addNewLabel">AddNew</h5>
+                    <!-- <h5 class="modal-title" v-show="!editmode" id="addNewLabel">AddNew</h5> -->
                     <!-- <h5 class="modal-title" v-show="editmode" id="addNewLabel">Edit</h5> -->
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -131,12 +131,6 @@
                             <has-error :form="form" field="deskripsi"></has-error>
                     </div>
                     <div class="form-group">
-                              <label for="file" class="col-form-label">Upload File</label>
-                              <div class="col-sm-12">
-                                  <input type="file" name="file" class="form-input" v-on:change="onFileChange">
-                              </div>
-                    </div>
-                    <div class="form-group">
                             <label for="inputCatatan" class="col-form-label">Catatan</label>
                             <textarea v-model="form.status_catatan" name="status_catatan"
                                 placeholder="Catatan"
@@ -144,6 +138,19 @@
                             </textarea>
                             <has-error :form="form" field="status_catatan"></has-error>
                     </div>
+                    <div class="form-group">
+                            <label for="status" class="col-form-label">Status</label>
+                            <select v-model="form.status" id="status" name="status"
+                                class="form-control" :class="{ 'is-invalid': form.errors.has('status') }">
+                                <option value="">Pilih Status</option>
+                                <option value="1">Pengajuan</option>
+                                <option value="2">Direview</option>
+                                <option value="3">Diterima</option>
+                                <option value="4">Ditolak</option>
+                                <!-- <option value="author">Author</option> -->
+                            </select>
+                            <has-error :form="form" field="status"></has-error>
+                      </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -172,9 +179,9 @@
             id : '',
             judul : '',
             deskripsi : '',
-            file : '',
             id_kategori : '',
             status_catatan : '',
+            status: '',
           })
         }
       },
@@ -190,9 +197,9 @@
                 // formData.append('judul', this.form.judul);
                 // formData.append('deskripsi', this.form.deskripsi);
                 // formData.append('id_kategori', this.form.id_kategori);
-                // axios.put('/api/usulanDosen/'+this.form.id, formData, config)
+                // axios.put('/api/usulanReviewer/'+this.form.id, formData, config)
 
-                this.form.put('api/usulanDosen/'+this.form.id)
+                this.form.put('api/usulanReviewer/'+this.form.id)
                 .then(() => {
                     $('#addNew').modal('hide');
                     swal.fire(
@@ -208,7 +215,7 @@
                 });
         },
         getResults(page = 1) {
-          axios.get('api/usulanDosen?page=' + page)
+          axios.get('api/usulanReviewer?page=' + page)
             .then(response => {
               this.usulan = response.data;
             });
@@ -225,7 +232,7 @@
           this.form.fill(usulan);
         },
         loadUsulan(){
-          axios.get("api/usulanDosen").then(({ data }) => this.usulan = data);
+          axios.get("api/usulanReviewer").then(({ data }) => this.usulan = data);
         },
         loadKategori(){
           axios.get("api/kategori").then(({ data }) => this.kategoris = data);
@@ -257,7 +264,7 @@
                 formData.append('judul', this.form.judul);
                 formData.append('deskripsi', this.form.deskripsi);
                 formData.append('id_kategori', this.form.id_kategori);
-                axios.post('/api/usulanDosen', formData, config)
+                axios.post('/api/usulanReviewer', formData, config)
           .then(()=>{
               Fire.$emit('AfterCreate');
               $('#addNew').modal('hide')

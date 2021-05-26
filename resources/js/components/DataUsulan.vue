@@ -49,30 +49,29 @@
                       <!-- <th>Deskripsi</th> -->
                       <th>User</th>
                       <th>File</th>
-                      <th>Registered At</th>
+                      <th>Reviewer</th>
+                      <th>Tanggal Upload</th>
                       <th>Status</th>
+                      <th>Lihat Detail</th>
                       <!-- <th>Modify</th> -->
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="usulan in usulan.data" :key="usulan.id">
-                      <td>{{usulan.id}}</td>
+                    <tr v-for="(usulan,index) in usulan.data" :key="usulan.id">
+                      <td>{{index+1}}</td>
                       <td>{{usulan.judul}}</td>
                       <!-- <td>{{usulan.deskripsi}}</td> -->
-                      <td>{{usulan.name}}</td>
+                      <td>{{usulan.user_upload}}</td>
                       <td><a href="#" @click="download(usulan.file)">{{usulan.file}}</a></td>
-                      <!-- <td>{{usulan.file}}</td> -->
+                      <td>{{usulan.reviewer}}</td>
                       <td>{{usulan.created_at | myDate}}</td>
-                      <td>{{usulan.status}}</td>
-                      <!-- <td>
+                      <td>{{usulan.nama_status}}</td>
+                      <td>
                           <a href="#" @click="editModal(usulan)">
-                              <i class="fa fa-edit blue"></i>
+                            Lihat Detail
+                              <i class="fa fa-info-circle"></i>
                           </a>
-                          /
-                          <a href="#" @click="deleteUsulan(usulan.id)">
-                              <i class="fa fa-trash red"></i>
-                          </a>
-                      </td> -->
+                      </td>
                     </tr>
                   </tbody>
                 </table>
