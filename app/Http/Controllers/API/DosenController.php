@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 use App\Dosen;
 use App\Reviewer;
+use App\File;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -47,7 +48,7 @@ class DosenController extends Controller
         $user = auth('api')->user();
         //
 
-        $fileName = time().'.'.$request->file->getClientOriginalExtension();
+        $fileName = Date('Y-h-d').'-REV'.'.'.$request->file->getClientOriginalExtension();
         $request->file->move(public_path('file'), $fileName);
 
         $dosen = Dosen::create([
@@ -64,6 +65,12 @@ class DosenController extends Controller
         Reviewer::create([
             'id_usulan'=>$dosen->id
         ]);
+
+        File::create([
+            'file'=>$fileName,
+            'id_usulan'=>$dosen->id
+        ]);
+
         return $dosen;
     }
 
@@ -114,8 +121,6 @@ class DosenController extends Controller
                 // 'file' => $request['file'],
                 'file' => $fileName,
                 'id_user'=> $user->id,
-                'id_reviewer'=>'0',
-                'status'=>'1',
                 'id_kategori'=>$request['id_kategori']
             ]);
         } else {
@@ -129,6 +134,11 @@ class DosenController extends Controller
                 'id_kategori'=>$request['id_kategori']
             ]);
         }
+
+        File::create([
+            'file'=>$fileName,
+            'id_usulan'=>$id
+        ]);
 
         
         return ['message' => 'Update berhasil'];
@@ -152,5 +162,10 @@ class DosenController extends Controller
         $dosen->delete();
 
         return ['message' => 'Dosen Deleted'];
+    }
+
+    public function fileupload($id){
+        $file = File::where('id_usulan','=',$id)->get();
+        return response()->json($file);
     }
 }

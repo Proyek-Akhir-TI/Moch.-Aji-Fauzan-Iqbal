@@ -136,6 +136,27 @@
                                   <input type="file" name="file" class="form-input" v-on:change="onFileChange">
                               </div>
                     </div>
+                    <div class="form-group" v-show="editmode">
+                      <label>File Revisi</label>
+                      <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">No</th>
+                          <th scope="col">File</th>
+                          <th scope="col">Tanggal</th>
+                          <th scope="col">Download</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(fileupload,index) in fileuploads" :value="fileupload.id" :key="fileupload.value">
+                          <th scope="row">{{index+1}}</th>
+                          <td>{{ fileupload.file }}</td>
+                          <td>{{ fileupload.created_at | myDate }}</td>
+                          <td><a href="#" @click="download(fileupload.file)">{{fileupload.file}}</a></td>
+                        </tr>
+                      </tbody>
+                      </table>
+                    </div>
                     <div class="form-group">
                             <label for="inputCatatan" class="col-form-label">Catatan</label>
                             <textarea v-model="form.status_catatan" name="status_catatan"
@@ -168,6 +189,7 @@
           usulan : {},
           kategoris : {},
           catatans : {},
+          fileuploads: {},
           form: new Form({
             id : '',
             judul : '',
@@ -181,18 +203,20 @@
       methods: {
         updateUsulan() {
                 this.$Progress.start();
-                // const config = {
-                //     headers: { 'content-type': 'multipart/form-data' }
-                // }
-                // let formData = new FormData();
-                // formData.append('id', this.form.id)
-                // formData.append('file', this.form.file);
-                // formData.append('judul', this.form.judul);
-                // formData.append('deskripsi', this.form.deskripsi);
-                // formData.append('id_kategori', this.form.id_kategori);
-                // axios.put('/api/usulanDosen/'+this.form.id, formData, config)
+                const config = {
+                    headers: { 'content-type': 'multipart/form-data' }
+                }
+                let formData = new FormData();
+                formData.append('id', this.form.id);
+                formData.append('file', this.file);
+                formData.append('judul', this.form.judul);
+                formData.append('deskripsi', this.form.deskripsi);
+                formData.append('id_kategori', this.form.id_kategori);
+                formData.append("_method", "PUT");
+                
+                axios.post('/api/updateusulan/'+this.form.id, formData, config)
 
-                this.form.put('api/usulanDosen/'+this.form.id)
+                // this.form.put('api/usulanDosen/'+this.form.id)
                 .then(() => {
                     $('#addNew').modal('hide');
                     swal.fire(
@@ -219,6 +243,7 @@
           $('#addNew').modal('show');
         },
         editModal(usulan){
+          this.loadFile(usulan.id)
           this.editmode = true;
           this.form.reset();
           $('#addNew').modal('show');
@@ -233,15 +258,35 @@
         loadCatatan(){
           axios.get("api/catatan").then(( { data } ) => this.catatan = data);
         },
+        loadFile(id){
+          axios.get("api/fileupload/"+id).then (({ data }) => this.fileuploads = data);
+        },
         download(file){
-          axios.get('/download/usulan/'+file, {responseType: 'arraybuffer'}).then(res=>{
-            let blob = new Blob([res.data], {type:'application/*'})
-            let link = document.createElement('a')
-            link.href = window.URL.createObjectURL(blob)
-            link.download = file
-            link._target = 'blank'
-            link.click();
-          })
+          //  axios.get("api/kategori").then(({ data }) => this.kategoris = data);
+          // console.log()
+          // axios.get('api/kategori', {responseType: 'arraybuffer'}).then(res=>{
+          //   let blob = new Blob([res.data], {type:'application/pdf'})
+          //   let link = document.createElement('a')
+          //   link.href = window.URL.createObjectURL(blob)
+          //   link.download = file
+          //   link._target = 'blank'
+          //   link.click();
+          window.open('api/filedownload/'+file, '_blank');
+          // axios.get("api/kategori/"+file);
+          // })
+          // axios({
+          //     url: 'api/kategori',
+          //     data : {file:file},
+          //     method: 'POST',
+          //     responseType: 'arraybuffer',
+          // }).then((response) => {
+          //     let blob = new Blob([response.data], {type:'application/pdf'})
+          //     let link = document.createElement('a')
+          //     link.href = window.URL.createObjectURL(blob)
+          //     link.download = file
+          //     link._target = 'blank'
+          //     link.click();
+          // });
         },
         onFileChange(e){
           console.log(e.target.files[0]);

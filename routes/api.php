@@ -34,12 +34,18 @@ Route::get('usulan_admin', 'API\UsulanController@index_admin');
 Route::get('usulan_diterima', 'API\UsulanController@index_diterima');
 
 Route::get('kategori', 'API\KategoriController@index');
+Route::get('filedownload/{file}', 'API\FileDownloadController@download');
+Route::get('fileupload/{id}', 'API\DosenController@fileupload');
 
 Route::get('download/usulan/{file}', 'API\UsulanController@downloadFile');
+
+// Route::get('download','API\UsulanController@downloadFile');
+// Route::get('download', 'API/FileDownloadController@index');
 
 Route::apiResources(['usulan' => 'API\UsulanController',
                     'usulanDosen'=> 'API\DosenController',
                     'usulanReviewer'=> 'API\ReviewerController']);
+Route::put('updateusulan/{id}','API\DosenController@update');
 
 Route::apiResources(['panduan' => 'API\PanduanController']);
 Route::get('download/panduan/{berkas}', 'API\UsulanController@downloadPanduan');

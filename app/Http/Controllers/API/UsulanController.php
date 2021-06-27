@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Usulan;
+use App\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UsulanController extends Controller
 {
@@ -59,7 +61,7 @@ class UsulanController extends Controller
         $fileName = time().'.'.$request->file->getClientOriginalExtension();
         $request->file->move(public_path('file'), $fileName);
 
-        return Usulan::create([
+        $usulan = Usulan::create([
             'judul' => $request['judul'],
             'deskripsi' => $request['deskripsi'],
             // 'file' => $request['file'],
@@ -68,9 +70,16 @@ class UsulanController extends Controller
             'id_reviewer'=>$request['id_reviewer'],
             'status'=>$request['status']
         ]);
+
+        File::create([
+            'file'=>$fileName,
+            'id_usulan'=>$usulan->id
+        ]);
+
+        return $usulan;
     }
 
-    public function downloadFile($file){
+    public function downloadFilex($file){
         $path = public_path().'/file/'.$file; // or storage_path() if needed
         $header = [
             'Content-Type' => 'application/*',

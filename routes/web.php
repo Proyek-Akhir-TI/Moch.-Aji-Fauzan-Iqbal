@@ -37,3 +37,5 @@ Route::post('panduan',"PanduanController@index");
 // Route::post('upload', 'PanduanController@uploadFile');
 // Route::get('delete/upload-folder/{file}', 'PanduanController@deleteFile');
 // Route::get('download/upload-folder/{file}', 'PanduanController@downloadFile');
+// Route::get('download/usulan/{file}', 'API\UsulanController@downloadFile');
+

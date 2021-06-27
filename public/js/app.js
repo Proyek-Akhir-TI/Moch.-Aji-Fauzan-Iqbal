@@ -4252,6 +4252,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -4259,6 +4280,7 @@ __webpack_require__.r(__webpack_exports__);
       usulan: {},
       kategoris: {},
       catatans: {},
+      fileuploads: {},
       form: new Form({
         id: '',
         judul: '',
@@ -4273,18 +4295,21 @@ __webpack_require__.r(__webpack_exports__);
     updateUsulan: function updateUsulan() {
       var _this = this;
 
-      this.$Progress.start(); // const config = {
-      //     headers: { 'content-type': 'multipart/form-data' }
-      // }
-      // let formData = new FormData();
-      // formData.append('id', this.form.id)
-      // formData.append('file', this.form.file);
-      // formData.append('judul', this.form.judul);
-      // formData.append('deskripsi', this.form.deskripsi);
-      // formData.append('id_kategori', this.form.id_kategori);
-      // axios.put('/api/usulanDosen/'+this.form.id, formData, config)
-
-      this.form.put('api/usulanDosen/' + this.form.id).then(function () {
+      this.$Progress.start();
+      var config = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      };
+      var formData = new FormData();
+      formData.append('id', this.form.id);
+      formData.append('file', this.file);
+      formData.append('judul', this.form.judul);
+      formData.append('deskripsi', this.form.deskripsi);
+      formData.append('id_kategori', this.form.id_kategori);
+      formData.append("_method", "PUT");
+      axios.post('/api/updateusulan/' + this.form.id, formData, config) // this.form.put('api/usulanDosen/'+this.form.id)
+      .then(function () {
         $('#addNew').modal('hide');
         swal.fire('Updated!', 'Information has been updated.', 'success');
 
@@ -4309,6 +4334,7 @@ __webpack_require__.r(__webpack_exports__);
       $('#addNew').modal('show');
     },
     editModal: function editModal(usulan) {
+      this.loadFile(usulan.id);
       this.editmode = true;
       this.form.reset();
       $('#addNew').modal('show');
@@ -4338,26 +4364,46 @@ __webpack_require__.r(__webpack_exports__);
         return _this5.catatan = data;
       });
     },
-    download: function download(file) {
-      axios.get('/download/usulan/' + file, {
-        responseType: 'arraybuffer'
-      }).then(function (res) {
-        var blob = new Blob([res.data], {
-          type: 'application/*'
-        });
-        var link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = file;
-        link._target = 'blank';
-        link.click();
+    loadFile: function loadFile(id) {
+      var _this6 = this;
+
+      axios.get("api/fileupload/" + id).then(function (_ref4) {
+        var data = _ref4.data;
+        return _this6.fileuploads = data;
       });
+    },
+    download: function download(file) {
+      //  axios.get("api/kategori").then(({ data }) => this.kategoris = data);
+      // console.log()
+      // axios.get('api/kategori', {responseType: 'arraybuffer'}).then(res=>{
+      //   let blob = new Blob([res.data], {type:'application/pdf'})
+      //   let link = document.createElement('a')
+      //   link.href = window.URL.createObjectURL(blob)
+      //   link.download = file
+      //   link._target = 'blank'
+      //   link.click();
+      window.open('api/filedownload/' + file, '_blank'); // axios.get("api/kategori/"+file);
+      // })
+      // axios({
+      //     url: 'api/kategori',
+      //     data : {file:file},
+      //     method: 'POST',
+      //     responseType: 'arraybuffer',
+      // }).then((response) => {
+      //     let blob = new Blob([response.data], {type:'application/pdf'})
+      //     let link = document.createElement('a')
+      //     link.href = window.URL.createObjectURL(blob)
+      //     link.download = file
+      //     link._target = 'blank'
+      //     link.click();
+      // });
     },
     onFileChange: function onFileChange(e) {
       console.log(e.target.files[0]);
       this.file = e.target.files[0];
     },
     createUsulan: function createUsulan() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.$Progress.start();
       var config = {
@@ -4378,17 +4424,17 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Usulan Created in successfully'
         });
 
-        _this6.$Progress.finish();
+        _this7.$Progress.finish();
       })["catch"](function () {});
     }
   },
   created: function created() {
-    var _this7 = this;
+    var _this8 = this;
 
     this.loadUsulan();
     this.loadKategori();
     Fire.$on('AfterCreate', function () {
-      _this7.loadUsulan();
+      _this8.loadUsulan();
     });
   }
 });
@@ -73136,6 +73182,72 @@ var render = function() {
                   _vm._v(" "),
                   _c(
                     "div",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.editmode,
+                          expression: "editmode"
+                        }
+                      ],
+                      staticClass: "form-group"
+                    },
+                    [
+                      _c("label", [_vm._v("File Revisi")]),
+                      _vm._v(" "),
+                      _c("table", { staticClass: "table" }, [
+                        _vm._m(2),
+                        _vm._v(" "),
+                        _c(
+                          "tbody",
+                          _vm._l(_vm.fileuploads, function(fileupload, index) {
+                            return _c(
+                              "tr",
+                              {
+                                key: fileupload.value,
+                                attrs: { value: fileupload.id }
+                              },
+                              [
+                                _c("th", { attrs: { scope: "row" } }, [
+                                  _vm._v(_vm._s(index + 1))
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [_vm._v(_vm._s(fileupload.file))]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _vm._v(
+                                    _vm._s(
+                                      _vm._f("myDate")(fileupload.created_at)
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("td", [
+                                  _c(
+                                    "a",
+                                    {
+                                      attrs: { href: "#" },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.download(fileupload.file)
+                                        }
+                                      }
+                                    },
+                                    [_vm._v(_vm._s(fileupload.file))]
+                                  )
+                                ])
+                              ]
+                            )
+                          }),
+                          0
+                        )
+                      ])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
                     { staticClass: "form-group" },
                     [
                       _c(
@@ -73280,6 +73392,22 @@ var staticRenderFns = [
       },
       [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
     )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("No")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("File")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Tanggal")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Download")])
+      ])
+    ])
   }
 ]
 render._withStripped = true
