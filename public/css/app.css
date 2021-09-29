@@ -98,8 +98,7 @@ p {
 abbr[title],
 abbr[data-original-title] {
   text-decoration: underline;
-  -webkit-text-decoration: underline dotted;
-          text-decoration: underline dotted;
+  text-decoration: underline dotted;
   cursor: help;
   border-bottom: 0;
 }
@@ -1712,11 +1711,6 @@ pre code {
 }
 
 .form-control:-ms-input-placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
-
-.form-control::-ms-input-placeholder {
   color: #6c757d;
   opacity: 1;
 }
@@ -6852,7 +6846,6 @@ button.bg-dark:focus {
 }
 
 .position-sticky {
-  position: -webkit-sticky !important;
   position: sticky !important;
 }
 
@@ -6872,9 +6865,8 @@ button.bg-dark:focus {
   z-index: 1030;
 }
 
-@supports ((position: -webkit-sticky) or (position: sticky)) {
+@supports (position: sticky) {
   .sticky-top {
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1020;
@@ -8760,10 +8752,6 @@ body,
   color: rgba(255, 255, 255, 0.6);
 }
 
-.navbar-dark .form-control-navbar::-ms-input-placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
 .navbar-dark .form-control-navbar::placeholder,
 .navbar-dark .form-control-navbar + .input-group-append > .btn-navbar {
   color: rgba(255, 255, 255, 0.6);
@@ -8799,10 +8787,6 @@ body,
 }
 
 .navbar-light .form-control-navbar:-ms-input-placeholder {
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.navbar-light .form-control-navbar::-ms-input-placeholder {
   color: rgba(0, 0, 0, 0.6);
 }
 
@@ -13230,12 +13214,10 @@ p {
 abbr[title],
 abbr[data-original-title] {
   text-decoration: underline;
-  -webkit-text-decoration: underline dotted;
-          text-decoration: underline dotted;
+  text-decoration: underline dotted;
   cursor: help;
   border-bottom: 0;
-  -webkit-text-decoration-skip-ink: none;
-          text-decoration-skip-ink: none;
+  text-decoration-skip-ink: none;
 }
 
 address {
@@ -15323,11 +15305,6 @@ pre code {
 }
 
 .form-control:-ms-input-placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
-
-.form-control::-ms-input-placeholder {
   color: #6c757d;
   opacity: 1;
 }
@@ -21400,7 +21377,6 @@ button.bg-dark:focus {
 }
 
 .position-sticky {
-  position: -webkit-sticky !important;
   position: sticky !important;
 }
 
@@ -21420,9 +21396,8 @@ button.bg-dark:focus {
   z-index: 1030;
 }
 
-@supports ((position: -webkit-sticky) or (position: sticky)) {
+@supports (position: sticky) {
   .sticky-top {
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1020;

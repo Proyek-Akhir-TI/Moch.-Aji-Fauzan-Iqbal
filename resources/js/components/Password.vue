@@ -92,13 +92,7 @@
         data() {
             return {
                 form: new Form({
-                    id : '',
-                    name : '',
-                    email : '',
                     password : '',
-                    type : '',
-                    bio : '',
-                    photo : ''
                 })
             }
         },
@@ -115,11 +109,12 @@
             },
             updateInfo() {
                 this.$Progress.start();
-                if(this.form.password == ''){
-                    this.form.password = undefined;
-                }
-                this.form.put('api/profile')
-                .then(()=>{
+                if(this.form.password == null || this.form.password == ""){
+                    this.$Progress.fail();
+                }else{
+                this.form.put('api/profilepassword')
+                .then((res)=>{
+                    console.log(res.data)
                     Fire.$emit('AfterCreate');
                     this.form.reset();
                     toast.fire({
@@ -131,6 +126,7 @@
                 .catch(()=>{
                     this.$Progress.fail();
                 });
+            }
             },
             updateProfile(e) {
                 // console.log('uploading');

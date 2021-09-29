@@ -1,165 +1,254 @@
+<style>
+    #bar-chart{
+        max-height :500px;
+    }
+</style>
+
 <template>
     <div class="container">
         <div class="row">
-            
-            <!-- <not-found></not-found> -->
-
-            <!-- tulisan Dashboard -->
-            <section class="content-header">
+            <section class="content-header col-md-12">
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-12">
                             <h1>Dashboard</h1>
                         </div>
-                        <!-- <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">ChartJS</li>
-                            </ol>
-                        </div> -->
                     </div>
-                </div><!-- /.container-fluid -->
+                </div>
             </section>
 
-            <!-- chartjs -->
-            <section class="content">
+        <!-- chartjs -->
+            <section class="content col-md-12">
                 <div class="container-fluid">
                     <div class="row">
-                    <div class="col-md-6">
-                        <!-- AREA CHART -->
-                        <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Area Chart</h3>
 
-                            <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                            </div>
+                        <div class="col-md-6">
+                            <va-card theme="card-success">
+                                <h1 class="text-center">Usulan Per Prodi</h1>
+                                <pie-chart v-if="loaded" :chartdata="usulanProdiData" />
+                            </va-card>
                         </div>
-                        <div class="card-body">
-                            <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                            <canvas id="areaChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 486px;" width="486" height="250" class="chartjs-render-monitor"></canvas>
-                            </div>
+                        
+                        <div class="col-md-6 mx-auto">
+                            <va-card theme="card-info">
+                                <h1 class="text-center">Usulan Per Kategori</h1>
+                                <pie-chart v-if="loaded" :chartdata ='usulanKategoriData' />
+                            </va-card>
                         </div>
-                        <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
 
-                        <!-- DONUT CHART -->
-                        <div class="card card-danger">
-                        <div class="card-header">
-                            <h3 class="card-title">Donut Chart</h3>
+                        <div class="col-md-12">
+                            <va-card theme="card-danger">
+                                <h1 class="text-center">Usulan Per Bulan</h1>
+                                <bar-chart v-if="loaded" :chartdata="usulanBulanData" />
+                            </va-card>
+                        </div>
 
-                            <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                            <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 486px;" width="486" height="250" class="chartjs-render-monitor"></canvas>
-                        </div>
-                        <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
+                        
 
-                        <!-- PIE CHART -->
-                        <div class="card card-danger">
-                        <div class="card-header">
-                            <h3 class="card-title">Pie Chart</h3>
-
-                            <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                            </div>
                         </div>
-                        <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                            <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 486px;" width="486" height="250" class="chartjs-render-monitor"></canvas>
-                        </div>
-                        <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-
-                    </div>
-                    <!-- /.col (LEFT) -->
-                    <div class="col-md-6">
-                        <!-- LINE CHART -->
-                        <div class="card card-info">
-                        <div class="card-header">
-                            <h3 class="card-title">Line Chart</h3>
-
-                            <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                            <canvas id="lineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 486px;" width="486" height="250" class="chartjs-render-monitor"></canvas>
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-
-                        <!-- BAR CHART -->
-                        <div class="card card-success">
-                        <div class="card-header">
-                            <h3 class="card-title">Bar Chart</h3>
-
-                            <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 486px;" width="486" height="250" class="chartjs-render-monitor"></canvas>
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-
-                        <!-- STACKED BAR CHART -->
-                        <div class="card card-success">
-                        <div class="card-header">
-                            <h3 class="card-title">Stacked Bar Chart</h3>
-
-                            <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                            <canvas id="stackedBarChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 486px;" width="486" height="250" class="chartjs-render-monitor"></canvas>
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-
-                    </div>
-                    <!-- /.col (RIGHT) -->
-                    </div>
-                    <!-- /.row -->
-                </div><!-- /.container-fluid -->
+                </div>
             </section>
-
         </div>
     </div>
 </template>
 
 <script>
-    export default {
-        mounted() {
-            console.log('Component mounted.')
-        }
+import LineChart from './chart/LineChart.vue'
+import BarChart from './chart/BarChart.vue'
+import PieChart from './chart/PieChart.vue'
+import VACard from './card/VACard.vue'
+
+export default {
+data(){
+    return{
+        loaded: false,
+        usulanProdiData:{},
+        usulanBulanData:{},
+        usulanKategoriData:{}
     }
+},
+
+beforeMount(){
+},
+
+async mounted() {
+    this.loaded = false
+    await this.line()
+    await this.bar()
+    await this.pie()
+    this.loaded = true
+
+    },
+
+    methods:{
+        async line(){
+            try {
+                let labels = []
+                let data = []
+                let color = []
+                    await axios.get('api/jumlahusulan')
+                    .then(res=>{
+                        res.data.forEach(element => {
+                            labels.push(element.labels)
+                            data.push(parseInt(element.data))
+                            color.push(this.getColorMonth(element.labels))
+                            })
+                        })
+
+                    this.usulanBulanData={
+                            labels: labels,
+                            datasets: [
+                                {
+                                label: 'Usulan Per Tiap Bulan',
+                                data: data,
+                                backgroundColor: color,
+                                }
+                            ]
+                        }
+            } catch (e) {
+            console.error(e)
+            }
+        },
+         async bar(){
+            try {
+            let labels = []
+            let data = []
+            let color = []
+            await axios.get('api/jumlahusulanbar')
+            .then(res=>{
+                res.data.forEach(element => {
+                    labels.push(element.kategori)
+                    data.push(parseInt(element.jumlahusulan))
+                    color.push("#"+Math.floor(256 * Math.random()))
+                    })
+                })
+
+                this.usulanKategoriData={
+                        labels: labels,
+                        datasets: [
+                            {
+                            label: false,
+                            data: data,
+                            backgroundColor: color,
+                            borderColor: color,
+                            borderWidth: 1
+
+                            }
+                        ]
+                    }
+                } catch (e) {
+                console.error(e)
+                }
+        },
+        async pie(){
+            try {
+            let labels = []
+            let data = []
+            let color = []
+            await axios.get('api/jumlahusulanpie')
+            .then(res=>{
+                res.data.forEach(element => {
+                    labels.push(element.prodi)
+                    data.push(parseInt(element.jumlahusulan))
+                    color.push(this.getColor(element.prodi))
+                    })
+                })
+
+        this.usulanProdiData={
+                labels: labels,
+                datasets: [
+                    {
+                    label: 'Usulan Per Kategori',
+                    data: data,
+                    backgroundColor: color,
+                    }
+                ]
+            }
+
+                } catch (e) {
+                console.error(e)
+                }
+        },
+
+        getColor(prodi){
+            switch(prodi){
+                case "Teknik Informatika":
+                    return "yellow"
+                    break;
+                case "Teknik Sipil":
+                    return "blue"
+                    break;
+                case "Teknik Mesin":
+                    return "red"
+                    break;
+                case "Teknik Manufaktur Kapal":
+                    return "#A93226"
+                    break;
+                case "Manajemen Bisnis Pariwisata":
+                    return "pink"
+                    break;
+                case "Agribisnis":
+                    return "green"
+                    break;
+                case "Teknologi Pengolahan Hasil Ternak":
+                    return "#935116"
+                    break;
+
+                default :
+                    return "black"
+                    break;
+            }
+        },
+        getColorMonth(bulan){
+            switch (bulan) {
+                case " January":
+                    return "#1abc9c"
+                    break;
+                case " February":
+                    return "#2ecc71"
+                    break;
+                case " March":
+                    return "#f1c40f"
+                    break;
+                 case " April":
+                    return "#e74c3c"
+                    break;
+                 case " May":
+                    return "#e67e22"
+                    break;
+                 case " June":
+                    return "#9b59b6"
+                    break;
+                 case " July":
+                    return "#2980b9"
+                    break;
+                 case " August":
+                    return "#8e44ad"
+                    break;
+                case " September":
+                    return "#d35400"
+                    break;
+                case " October":
+                    return "#16a085"
+                    break;
+                case " November":
+                    return "#2980b9"
+                    break;
+                case " December":
+                    return "#e74c3c"
+                    break;
+                default:
+                    return "red"
+                    break;
+            }
+        }
+
+    },
+components:{
+    LineChart,
+    BarChart,
+    PieChart,
+    'va-card':VACard,
+    },
+}
 </script>

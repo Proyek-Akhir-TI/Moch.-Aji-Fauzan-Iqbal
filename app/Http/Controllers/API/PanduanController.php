@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Storage;
 
 class PanduanController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,9 +21,8 @@ class PanduanController extends Controller
      */
     public function index()
     {
-        //
+        return panduan::first();
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -30,12 +33,19 @@ class PanduanController extends Controller
     {
         //
 
-        $fileName = time().'.'.$request->file->getClientOriginalExtension();
+        $fileName = 'panduan '.$request->file->getClientOriginalName();
         $request->file->move(public_path('file'), $fileName);
-
-        return Usulan::create([
-            'file' => $fileName,
-        ]);
+        if(panduan::first() == null){
+            panduan::create([
+                'file' => $fileName,
+            ]);
+        }else{
+            panduan::first()->update([
+                'file' => $fileName,
+            ]);
+        }
+        
+        return response()->json($request);
     }
 
     public function downloadPanduan($file){
@@ -44,6 +54,17 @@ class PanduanController extends Controller
             'Content-Type' => 'application/*',
         ];
         return response()->download($path, $file, $header);
+     }
+
+     public function downloadp(){
+        // $panduan = Panduan::first()->file;
+        // $path = public_path().'/file/'.$panduan; // or storage_path() if needed
+        // $header = [
+        //     'Content-Type' => 'application/*',
+        // ];
+        // // return response()->download($path, $panduan, $header);
+        // return Storage::download($panduan);
+        echo 'muehehhe';
      }
 
     /**

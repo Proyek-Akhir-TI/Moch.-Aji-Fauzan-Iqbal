@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'type', 'bio', 'photo'
+        'name', 'email', 'password', 'type', 'bio', 'photo','nip_nik','id_prodi'
     ];
 
     /**
@@ -40,12 +40,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function profile(){
+        return $this->hasMany('App\profile','id_user'); 
+    }
+
     public static function allJoin(){
         $user = auth('api')->user();
         return $user = DB::table('users')
-            ->select('users.*','roles.role')
+            ->select('users.*','roles.role','prodi.prodi','profiles.id_prodi','profiles.nip_nik','profiles.foto_profil')
             ->leftJoin('roles', 'users.type', '=', 'roles.id')
-            ->paginate(5);
+            ->join('profiles','profiles.id_user','users.id')
+            ->leftjoin('prodi','prodi.id','profiles.id_prodi')
+            ->paginate(10);
     }
 
     public static function reviewer(){

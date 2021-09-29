@@ -23,29 +23,36 @@
                       <th>Nama</th>
                       <th>Email</th>
                       <th>Tipe</th>
+                      <th>Prodi</th>
+                      <th>Nip_Nik</th>
                       <th>Registered At</th>
-                      <th>#</th>
+                      <th>#Action</th>
                     </tr>
                   
                     <!-- <tr v-for="(user, index) in reverseUsers" :key="index++"> -->
                          <!-- index berdasarkan index array nya -->
 
-                    <tr v-for="user in users.data" :key="user.id">
+                    <tr v-for="(user,index) in users.data" :key="user.id">
 
                       <!-- <td>{{index}}</td> -->
-                      <td>{{user.id}}</td>
+
+                      <td>{{index+1}}</td>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
                       <td>{{user.role | upText}}</td>
+                      <td>{{user.prodi!=null? user.prodi : '-'}}</td>
+                      <td>{{user.nip_nik !=null? user.nip_nik :'-'}}</td>
                       <td>{{user.created_at | myDate}}</td>
                       <td>
-                          <a href="#" @click="editModal(user)">
+                          <div>
+                              <a href="#" @click="editModal(user)">
                               <i class="fa fa-edit blue"></i>
-                          </a>
-                          /
-                          <a href="#" @click="deleteUser(user.id)">
-                              <i class="fa fa-trash red"></i>
-                          </a>
+                            </a>
+                            /
+                            <a href="#" @click="deleteUser(user.id)">
+                                <i class="fa fa-trash red"></i>
+                            </a>
+                          </div>
                       </td>
                     </tr>
                   </tbody>
@@ -86,12 +93,29 @@
                             <has-error :form="form" field="name"></has-error>
                         </div>
                         <div class="form-group">
+                            <label for="nip_nik" class="col-form-label">Nip Nik</label>
+
+                            <input v-model="form.nip_nik" type="text" nip_nik="nip_nik"
+                                placeholder="nip_nik"
+                                class="form-control" :class="{ 'is-invalid': form.errors.has('nip_nik') }">
+                            <has-error :form="form" field="nip_nik"></has-error>
+                        </div>
+                        <div class="form-group">
                             <label for="inputEmail" class="col-form-label">Email</label>
 
                             <input v-model="form.email" type="email" name="email"
                                 placeholder="Email Address"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('email') }">
                             <has-error :form="form" field="email"></has-error>
+                        </div>
+                        <div class="form-group">
+                            <label for="prodi" class="col-form-label">prodi</label>
+                            <select v-model="form.id_prodi" id="id_prodi" name="id_prodi"
+                                class="form-control" :class="{ 'is-invalid': form.errors.has('id_prodi') }">
+                               <option :value="editmode? 'null':''">Pilih Prodi</option>
+                               <option v-for="prodi in prodis" :value="prodi.id" :key="prodi.id">{{prodi.prodi}}</option>
+                            </select>
+                            <has-error :form="form" field="name"></has-error>
                         </div>
                         <div class="form-group">
                             <label for="bio" class="col-form-label">Bio</label>
@@ -104,22 +128,20 @@
                         </div>
                         <div class="form-group">
                             <label for="type" class="col-form-label">Tipe</label>
-
                             <select v-model="form.type" id="type" name="type"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('type') }">
                                 <option value="">Select User Role</option>
                                 <option value="1">Admin</option>
                                 <option value="2">Dosen</option>
-                                <option value="3">Reviewer</option>
                             </select>
                             <has-error :form="form" field="name"></has-error>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" :class="editmode?'d-none':''">
                             <label for="password" class="col-form-label">
                                     Password
                             </label>
 
-                            <input v-model="form.password" type="password" name="password" id="password"
+                            <input v-model="form.password"  type="password" name="password" id="password"
                                 placeholder="Password"
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('password') }">
                             <has-error :form="form" field="password"></has-error>
@@ -142,6 +164,7 @@
         data() {
             return {
                 editmode: false,
+                prodis : {},
                 // users : {
                 //     data: [] 
                 // },
@@ -153,8 +176,9 @@
                     email : '',
                     password : '',
                     type : '',
+                    id_prodi :"",
+                    nip_nik :"",
                     bio : ''
-                    // photo : ''
                 })
             }
         },
@@ -278,12 +302,23 @@
                         })
 
                     this.$Progress.finish();
+                    swal.fire({
+                        icon: 'success',
+                        title: 'Success...',
+                        text: 'Berhasil Menambah User',
+                    })
 
                 })
                 .catch(() => {
 
                 })
                 
+            },
+            async getProdi(){
+                await axios.get('api/prodi')
+                .then((res)=>{
+                    this.prodis = res.data
+                })
             }
         },
 
@@ -303,10 +338,11 @@
                 this.loadUsers();
             });
             // setInterval(() => this.loadUsers(), 3000);
-        }
+        },
 
-        // mounted() {
-        //     console.log('Component mounted.')
-        // }
+        mounted() {
+           console.log('Component mounted.')
+           this.getProdi()
+        }
     }
 </script>

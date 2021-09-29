@@ -61,12 +61,13 @@ let routes = [
     { path: '/usulan', component: require('./components/Usulan.vue').default },
     { path: '/status', component: require('./components/Status.vue').default },
     { path: '/panduan', component: require('./components/Panduan.vue').default },
-    { path: '/panduanDosen', component: require('./components/PanduanDosen.vue').default },
+    { path: '/panduanDosen', name: "panduan-dosen", component: require('./components/PanduanDosen.vue').default },
     { path: '/pengajuan', component: require('./components/Pengajuan.vue').default },
     { path: '/password', component: require('./components/Password.vue').default },
     { path: '/usulanDosen', component: require('./components/UsulanDosen.vue').default },
     { path: '/dataUsulan', component: require('./components/DataUsulan.vue').default },
     { path: '/usulanReviewer', component: require('./components/UsulanReviewer.vue').default },
+    { path: '/kategori', component: require('./components/Kategori.vue').default },
     { path: '*', component: require('./components/NotFound.vue').default }
 ]
 
@@ -129,7 +130,8 @@ const app = new Vue({
     el: '#app',
     router,
     data: {
-        search: ''
+        search: '',
+        file: ""
     },
     methods: {
         searchit: _.debounce(() => {
@@ -138,8 +140,46 @@ const app = new Vue({
 
         printme() {
             window.print();
+        },
+        download() {
+            this.panduanLoad()
+        },
+        async panduanLoad() {
+            await axios.get('api/panduan')
+                .then(res => {
+                    this.file = res.data.file
+                })
+
+            this.downloadPanduan()
+            console.log(this.file);
+        },
+        email() {
+            axios.get('api/kirim-email');
+        },
+        downloadPanduan() {
+            // axios.get('api/downloadpanduan/'+this.file, {responseType: 'arraybuffer'}).then(res=>{
+            //      let blob = new Blob([res.data], {type:'application/*'})
+            //         let link = document.createElement('a')
+            //         link.href = window.URL.createObjectURL(blob)
+            //         link.download = this.file
+            //         link._target = 'blank'
+            //         link.click();
+            // })
+            // console.log(this.file)
+            // const url = "api/downloadpanduan/" + this.file
+            // window.open(url).focus()
+            axios.get('api/downloadpanduan/' + this.file, { responseType: 'arraybuffer' }).then(res => {
+                let blob = new Blob([res.data], { type: 'application/*' })
+                let link = document.createElement('a')
+                link.href = window.URL.createObjectURL(blob)
+                link.download = this.file
+                link._target = '_blank'
+                link.click();
+            })
         }
-    }
+
+    },
+    created() {}
     // components:{
     //   Panduan,
     // }

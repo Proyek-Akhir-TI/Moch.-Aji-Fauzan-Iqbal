@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Kategori;
 namespace App\Http\Controllers\API;
 use App\Kategori;
 use App\Http\Controllers\Controller;
@@ -22,7 +21,7 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        return Kategori::all();
+        return Kategori::latest()->paginate();
     }
 
     /**
@@ -43,7 +42,11 @@ class KategoriController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $kategori = Kategori::create([
+            'kategori' => $request['kategori']
+        ]);
+
+        return $kategori;
     }
 
     /**
@@ -75,9 +78,16 @@ class KategoriController extends Controller
      * @param  \App\Kategori  $kategori
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Kategori $kategori)
+    public function update(Request $request, $id)
     {
-        //
+        $kategori = Kategori::findOrFail($id);
+
+        $this->validate($request,[
+            'kategori' => 'required'
+        ]);
+
+        $kategori->update($request->all());
+        return ['message' => 'Kategori telah diperbarui'];
     }
 
     /**

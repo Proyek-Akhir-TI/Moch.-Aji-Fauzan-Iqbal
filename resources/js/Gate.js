@@ -13,17 +13,17 @@ export default class Gate {
     }
 
     isReviewer() {
-        return this.user.type === '3';
+        return this.user.type === '2';
     }
 
     isAdminOrReviewer() {
-        if (this.user.type === '1' || this.user.type === '3') {
+        if (this.user.type === '1' || this.user.type === '2') {
             return true;
         }
     }
 
     isReviewerOrUser() {
-        if (this.user.type === '2' || this.user.type === '3') {
+        if (this.user.type === '2' || this.user.type === '2') {
             return true;
         }
     }

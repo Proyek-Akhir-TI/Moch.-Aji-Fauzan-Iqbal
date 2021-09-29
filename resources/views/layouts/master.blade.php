@@ -49,20 +49,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </div>
     </form>
 
-    <div class="navbar ml-auto">
-      <strong>
-      {{ Auth::user()->type }}
-      </strong>
-    </div>
-
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
     
       @can('isUser')
       <li class="nav-item">
-        <router-link to="/panduanDosen" class="nav-link">
+        <!-- <a href="{{ url('download_panduan')}}" class="nav-link">
           Panduan
-        </router-link>
+        </a> -->
+    
+        <a @click="download()" class="btn btn-primary">
+          Panduan
+        </a>
+        
       </li>
       @endcan
       <!-- Messages Dropdown Menu -->
@@ -72,7 +71,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           {{ Auth::user()->name }} -->
           <div class="user-panel mr-3">
             <div class="image">
-              <img src="./img/profile.png" class="img-circle elevation-2" alt="User Image">
+              <img src="./img/profile/{{Auth()->user()->profile[0]->foto_profil}}" class="img-circle elevation-2" alt="User Image">
             </div>
             {{ Auth::user()->name }}
           </div>
@@ -110,7 +109,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <a href="/" class="brand-link">
       <img src="./img/press.jpeg" alt="Press Logo" class="brand-image img-circle elevation-3"
            style="opacity: .8">
       <span class="brand-text font-weight-light">
@@ -211,6 +210,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <i class="fas fa-users nav-icon"></i>
                   <p>Berkas Panduan</p>
                 </router-link>
+                <router-link to="/kategori" class="nav-link">
+                  <i class="fas fa-users nav-icon"></i>
+                  <p>Kategori</p>
+                </router-link>
               </li>
             </ul>
           </li>
@@ -226,7 +229,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
           @endcan
 
           @can('isUser')
-          <li class="nav-item has-treeview">
+          <li class="nav-item">
+            <router-link to="/usulanDosen" class="nav-link">
+              <i class="fas fa-book nav-icon orange"></i>
+              <p>Pengajuan</p>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/status" class="nav-link">
+              <i class="fas fa-book nav-icon indigo"></i>
+              <p>Riwayat Pengajuan</p>
+            </router-link>
+          </li>
+          {{-- <li class="nav-item has-treeview">
           
             <a href="#" class="nav-link">
               <!-- <router-link to="/usulanDosen" class="nav-link"> -->
@@ -253,29 +268,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
             </ul>
               
-          </li>
+          </li> --}}
           @endcan
 
-          @can('isReviewer')
-          <li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
-              <!-- <router-link to="/usulanDosen" class="nav-link"> -->
-                  <i class="fas fa-download nav-icon yellow"></i>
-                  <p>
-                    Usulan
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                <!-- </router-link> -->
-            </a>
-            <ul class="nav nav-treeview">
+          @can('isUser')
               <li class="nav-item">
                 <router-link to="/usulanReviewer" class="nav-link">
                   <i class="fas fa-book nav-icon orange"></i>
-                  <p>Daftar Review</p>
+                  <p>Review</p>
                 </router-link>
               </li>
-            </ul>
-          </li>
           @endcan
 
           <!-- <li class="nav-item">
@@ -354,9 +356,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 @auth
 <script>
     window.user = @json(auth()->user())
+    
 </script>   
+
 @endauth
 
-<script src="/js/app.js"></script>
+<script>
+
+
+</script>
+<script src="/js/app.js">
+</script>
+
 </body>
 </html>

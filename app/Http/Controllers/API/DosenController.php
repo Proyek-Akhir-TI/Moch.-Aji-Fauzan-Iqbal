@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\API;
 use App\Dosen;
 use App\Reviewer;
+use App\Record_status;
 use App\File;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+
+use App\Mail\Email_admin;
+// Panggil support email dari Laravel
+use Illuminate\Support\Facades\Mail;
 
 class DosenController extends Controller
 {
@@ -24,6 +30,16 @@ class DosenController extends Controller
     public function index()
     {
         return Dosen::allJoin_id();
+    }
+
+    public function index_status()
+    {
+        return Dosen::allJoin_idstatus();
+    }
+
+    public function get_catatan($id)
+    {
+        return Dosen::catatan($id);
     }
 
     /**
@@ -46,9 +62,16 @@ class DosenController extends Controller
     {
         // $dosen = auth('api')->Dosen();
         $user = auth('api')->user();
+
+        $getReviewer = Dosen::getAdmin();
+        // dd($getReviewer);
+
+        $nama = $getReviewer[0]->name;
+        $email = $getReviewer[0]->email;
+        $kirim = Mail::to($email)->send(new Email_admin( $request['judul'],$user->name,Date('Y-h-d h:i:s')));
         //
 
-        $fileName = Date('Y-h-d').'-REV'.'.'.$request->file->getClientOriginalExtension();
+        $fileName = Date('Y-h-d').'-'.$request->file->getClientOriginalName();
         $request->file->move(public_path('file'), $fileName);
 
         $dosen = Dosen::create([
@@ -60,6 +83,13 @@ class DosenController extends Controller
             'id_reviewer'=>'0',
             'status'=>'1',
             'id_kategori'=>$request['id_kategori']
+        ]);
+
+        Record_status::create([
+            'status' => '1',
+            'tanggal'=>Date('Y-h-d h:i:s'),
+            'is_active'=>'1',
+            'id_usulan'=>$dosen->id
         ]);
 
         Reviewer::create([
@@ -111,17 +141,27 @@ class DosenController extends Controller
         $dosen = Dosen::findOrFail($id);
         $user = auth('api')->user();
         
-        if($request->file){
+        if($request->hasFile('file')){
             $fileName = time().'.'.$request->file->getClientOriginalExtension();
             $request->file->move(public_path('file'), $fileName);
-
+            if($dosen->status == 4){
+                $status = 2;
+            }else{
+                $status = $dosen->status;
+            }
+            File::create([
+                'file'=>$fileName,
+                'id_usulan'=>$id
+            ]);
             $dosen->update([
                 'judul' => $request['judul'],
                 'deskripsi' => $request['deskripsi'],
                 // 'file' => $request['file'],
+                'status'=>$status,
                 'file' => $fileName,
                 'id_user'=> $user->id,
-                'id_kategori'=>$request['id_kategori']
+                'id_kategori'=>$request['id_kategori'],
+                'rekomendasi'=>$request['rekomendasi']
             ]);
         } else {
             $dosen->update([
@@ -131,14 +171,12 @@ class DosenController extends Controller
                 'id_user'=> $user->id,
                 'id_reviewer'=>'0',
                 'status'=>'1',
-                'id_kategori'=>$request['id_kategori']
+                'id_kategori'=>$request['id_kategori'],
+                'rekomendasi'=>$request['rekomendasi']
             ]);
         }
 
-        File::create([
-            'file'=>$fileName,
-            'id_usulan'=>$id
-        ]);
+      
 
         
         return ['message' => 'Update berhasil'];
@@ -162,6 +200,38 @@ class DosenController extends Controller
         $dosen->delete();
 
         return ['message' => 'Dosen Deleted'];
+    }
+
+    public function index_tanggal($id)
+    {
+        //
+        // if (\Gate::allows('isAdmin')) {
+            return Dosen::allJoinTanggal($id);
+        // }
+    }
+
+    public function index_statuses($id)
+    {
+        //
+        // if (\Gate::allows('isAdmin')) {
+            return Dosen::allJoinstatus($id);
+        // }
+    }
+
+    public function index_kategori($id)
+    {
+        //
+        // if (\Gate::allows('isAdmin')) {
+            return Dosen::allJoinkategori($id);
+        // }
+    }
+
+    public function index_judul($id)
+    {
+        //
+        // if (\Gate::allows('isAdmin')) {
+            return Dosen::allJoinjudul($id);
+        // }
     }
 
     public function fileupload($id){

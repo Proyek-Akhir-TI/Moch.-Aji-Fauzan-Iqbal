@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use App\profile;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -48,46 +49,69 @@ class UserController extends Controller
             'password' => 'required|string|min:6'
         ]);
         
-        return User::create([
+
+        $iduser =  User::create([
             'name' => $request['name'],
             'email' => $request['email'],
             'type' => $request['type'],
             'bio' => $request['bio'],
-            'photo' => $request['photo'],
             'password' => Hash::make($request['password']),
-        ]);
+        ])->id;
+        profile::create(["nip_nik"=>$request->nip_nik,"id_prodi"=>$request->id_prodi,"id_user"=>$iduser]);
+        return "Success";
     }
 
     public function updateProfile(Request $request)
     {
         $user = auth('api')->user();
 
-        $this->validate($request,[
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
-            'password' => 'sometimes|required|min:6'
+        // $this->validate($request,[
+        //     'name' => 'required|string|max:255',
+        //     'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+        //     'password' => 'sometimes|required|min:6'
+        // ]);
+        User::where('id','=',$user->id)->update([
+            'name'=>$request->name,
+            'email'=>$request->email,
+            'bio'=>$request->bio,
         ]);
+        profile::where('id_user','=',$user->id)
+        ->update(
+            [
+                'id_prodi'=>$request->id_prodi,
+                'nip_nik'=>$request->nip_nik,
+            ]
+        );
+        $currentPhoto = profile::where('id_user','=',$user->id)->first()->foto_profil;
+        if( $request->photo != $currentPhoto && $request->photo !="profile.png"){
 
-        $currentPhoto = $user->photo;
-        if( $request->photo != $currentPhoto ){
-            
             $name=time().'.'. explode('/', explode(':',substr($request->photo,0,strpos($request->photo,';')))[1])[1];
             \Image::make($request->photo)->save(public_path('img/profile/').$name);
-              $request->merge(['photo' => $name]);
-            //new poto name marege to request form
             $userPhoto = public_path('img/profile/').$currentPhoto;
             if(file_exists($userPhoto)){
-              @unlink($userPhoto); 
+              @unlink($userPhoto);
             }
+            profile::where('id_user','=',$user->id)->update(['foto_profil'=>$name]);
           }
 
-        if(!empty($request->password)){
-            $request->merge(['password' => Hash::make($request['password'])]);
-        }
+        // if(!empty($request->password)){
+        //     $request->merge(['password' => Hash::make($request['password'])]);
+        // }
 
-        $user->update($request->all());
-        return ['message' => "Success"];
+        // $user->update($request->all());
+        return $request;
+        // return ['message' => "Success"];
     }
+
+    public function updateProfilePassword(Request $request)
+    {
+        $user = auth('api')->user();
+        $user->update([
+            "password"=> Hash::make($request['password']),
+        ]);
+        return "Success";
+    }
+
 
     public function updatePassword(Request $request)
     {
@@ -109,7 +133,11 @@ class UserController extends Controller
 
     public function profile()
     {
-        return auth('api')->user();
+        return User::join('profiles','profiles.id_user','users.id')
+        ->select('users.name','users.id','users.email','users.type','users.bio',
+        'profiles.foto_profil as photo','profiles.nip_nik','profiles.id_prodi')
+        ->where('users.id','=',auth('api')->user()->id)->first()
+        ;
     }
 
     /**
@@ -133,6 +161,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        $profile =profile::where('id_user','=',$id)->first();
 
         $this->validate($request,[
             'name' => 'required|string|max:255',
@@ -140,7 +169,13 @@ class UserController extends Controller
             'password' => 'sometimes|min:6'
         ]);
 
-        $user->update($request->all());
+        $user->update([
+            "name"=>$request->name,
+            "email"=>$request->email,
+            "type"=>$request->type,
+            "bio"=>$request->bio
+        ]);
+        $profile->update(["nip_nik"=>$request->nip_nik,"id_prodi"=>$request->id_prodi]);
         return ['message' => 'Updated the user info'];
     }
 
@@ -156,7 +191,7 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
         // delete the user
-
+        profile::where('id_user','=',$id)->delete();
         $user->delete();
 
         return ['message' => 'User Deleted'];

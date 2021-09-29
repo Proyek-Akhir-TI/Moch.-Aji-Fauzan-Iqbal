@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('dashboard');
 });
 
 Auth::routes();
 
-Route::get('/', 'HomeController@index')->name('home');
+// Route::get('/', 'HomeController@index')->name('home');
 
 Route::get('invoice', function(){
     return view('invoice');
@@ -32,6 +32,10 @@ Route::get('usulan', "UsulanController@index");
 Route::get('usulan_admin', "UsulanController@index_admin");
 
 Route::post('panduan',"PanduanController@index");
+
+Route::get('usulan', "UsulanController@index");
+
+Route::get('/dp','PanduanController@downloadp')->name('dp');
 
 // Route::get('files', 'PanduanController@index');
 // Route::post('upload', 'PanduanController@uploadFile');

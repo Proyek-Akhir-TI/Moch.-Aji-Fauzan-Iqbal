@@ -14,15 +14,33 @@ class Reviewer extends Model
     protected $table = 'usulan_catatan';
 
     protected $fillable = [
-        'status_catatan','id_usulan'
+        'status_catatan','id_usulan','status','id_reviewer'
     ];
 
     public static function getReviewer(){
         $user = DB::table('users')
             ->select('users.*')
-            ->where('users.type','=','3')
+            ->where('users.type','=','2')
             ->get();
         return $user;
+    }
+
+    public static function getListReviewer($id){
+        $user = DB::table('users')
+            ->select('users.*','reviewer_usulan.id_usulan','reviewer_usulan.id_reviewer','reviewer_usulan.id as id_post')
+            ->leftJoin('reviewer_usulan','users.id','=','reviewer_usulan.id_reviewer')
+            ->where('reviewer_usulan.id_usulan',$id)
+            ->get();
+        return $user;
+    }
+
+    public static function getListReviewerNilai($id){
+        $nilai = DB::table('reviewer_nilai')
+            ->select('reviewer_nilai.*','users.name as nama_reviewer')
+            ->leftJoin('users','reviewer_nilai.id_reviewer','=','users.id')
+            ->where('reviewer_nilai.id_usulan',$id)
+            ->get();
+        return $nilai;
     }
 
     public static function allJoin_id(){
@@ -35,7 +53,8 @@ class Reviewer extends Model
                 ->leftJoin('users as b','usulan.id_reviewer','=','b.id')
                 ->leftJoin('kategori','usulan.id_kategori','=','kategori.id')
                 ->where('usulan.id_reviewer',$user->id)
-                // ->where('usulan.status','1')
                 ->paginate(10);
     }
+
+
 }

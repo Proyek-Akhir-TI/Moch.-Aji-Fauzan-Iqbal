@@ -6,7 +6,7 @@
                     <div class="card-header text-center">Berkas Panduan</div>
 
                     <div class="card-body">
-                        <form class="form-horizontal" @submit.prevent="editmode ? updatePanduan() : createPanduan()">
+                        <form class="form-horizontal" @submit.prevent="createPanduan()">
                             <div class="form-group">
                                 <div class="col-sm-12">
                                     <input type="file" name="file" class="form-input"
@@ -15,50 +15,36 @@
                             </div>
                             <div class="form-group text-right">
                                 <div class="col-sm-12">
-                                    <button type="submit" @click.prevent="updatePanduan"
-                                    class="btn btn-success" v-on:change="onFileChange">Upload</button>
+                                    <button type="submit" @click.prevent="createPanduan"
+                                    class="btn btn-success">Upload</button>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- <div>
-        <h1>Vue.js + Laravel</h1>
-
-        <form v-on:submit.prevent="uploadFile">
-            <md-field>
-                <label>Select file</label>
-                <md-file  name="file" v-on:change="onSelectFile" />
-            </md-field>
-
-            <md-button type="submit" class="md-raised md-accent">Upload</md-button>
-        </form>
-        <hr>
-
-        <table>
+            <div class="card card-body col-md-8 table-responsive p-0">
+        <table class="table table-hover">
             <tr>
                 <th>File name</th>
                 <th>Actions</th>
             </tr>
-            <tr v-for="panduan in panduan" :key="panduan.id">
-
-                <td>file</td>
+            <tr>
+                <td>{{panduan.panduan}}</td>
                 <td>
-                    <form v-on:submit.prevent="downloadFile(file)">
-                        <md-button class="md-raised md-danger" type="submit">Download</md-button>
-                    </form>
-
-                    <form v-on:submit.prevent="deleteFile(file)">
-                        <md-button class="md-raised md-danger" type="submit">Delete</md-button>
+                    <form v-on:submit.prevent="download(panduan.panduan)">
+                        <button class="btn btn-primary" type="submit">Download</button>
                     </form>
                 </td>
             </tr>
         </table>
-    </div> -->
+        </div>
+        </div>
+        
+    </div>
+
+
 </template>
 
 <script>
@@ -74,64 +60,27 @@
         },
         mounted() {
             console.log('Component mounted.')
+            this.loadPanduan();
         },
 
         methods: {
-            updatePanduan() {
-                this.$Progress.start();
-                this.form.post('api/panduan'+this.form.id)
-                .then(()=>{
-                    $('#addNew').modal('hide');
-                    swal.fire(
-                        'Updated!',
-                        'Information has been updated.',
-                        'success'
-                        )
-                    this.$Progress.finish();
-                    Fire.$emit('AfterCreate');
-                    
-                })
-                .catch(()=>{
-                    this.$Progress.fail();
-                });
-            },
-            deletePanduan(id){
-                swal.fire({
-                            title: "Are you sure?",
-                            text: "You won't be able to revert this!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Yes, delete it!'
-                        }).then((result) => {
-                            if (result.value) {
 
-                                this.form.delete('api/panduan/'+id).then(()=>{
-                                        swal.fire(
-                                            'Deleted!',
-                                            'Your file has been deleted.',
-                                            'success'
-                                        )
-                                    Fire.$emit('AfterCreate');
-                                    
-                                }).catch(()=>{
-                                    swal.fire("Failed!", "There was something wronge.", "warning");
-                                });
-                            }
-                        })
-            },
-            loadPanduan(){
-                axios.get("api/panduan").then(({ data }) => this.panduan = data.data);
+            async loadPanduan(){
+               await axios.get("api/panduan").then((res) => {
+                   this.panduan = {
+                       id: res.data.id,
+                       panduan: res.data.file
+                   }
+               });
             },
             download(file){
-                axios.get('/download/panduan/'+file, {responseType: 'arraybuffer'}).then(res=>{
-                    let blob = new Blob([res.data], {type:'application/*'})
-                    let link = document.createElement('a')
-                    link.href = window.URL.createObjectURL(blob)
-                    link.download = file
-                    link._target = 'blank'
-                    link.click();
+                axios.get('api/downloadpanduan/'+file, {responseType: 'arraybuffer'}).then(res=>{
+                     let blob = new Blob([res.data], {type:'application/*'})
+                        let link = document.createElement('a')
+                        link.href = window.URL.createObjectURL(blob)
+                        link.download = file
+                        link._target = 'blank'
+                        link.click();
                 })
             },
             onFileChange(e){
@@ -144,12 +93,11 @@
                             headers: { 'content-type': 'multipart/form-data' }
                         }
             
-                        let formData = new FormData();
-                        formData.append('file', this.file);
+                let formData = new FormData();
+                formData.append('file', this.file);
         
-                        axios.post('/api/panduan', formData, config)
-                // this.form.post('api/usulan')
-                .then(()=>{
+                 axios.post('api/panduan', formData, config)
+                .then((res)=>{
                     Fire.$emit('AfterCreate');
                     $('#addNew').modal('hide')
 
@@ -157,6 +105,7 @@
                         type: 'success',
                         title: 'Panduan Created in successfully'
                     })
+                    this.loadPanduan();
 
                     this.$Progress.finish();
                 })
@@ -167,10 +116,7 @@
                 }
         },
         created() {
-            // axios.get("api/panduan")
-            // .then(({ data }) => (this.form.fill(data)));
 
-            this.loadPanduan();
             Fire.$on('AfterCreate',()=>{
             this.loadPanduan();
             });
